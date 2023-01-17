@@ -54,7 +54,7 @@ module.exports = grammar({
     interior_sequence: $ => seq(
       field('letter', $.sequence_letter),
       $._intseq_start,
-      repeat(choice($._content_plain, $.interior_sequence)),
+      optional($.content),
       $._intseq_end
     ),
     sequence_letter: $ => $._intseq_letter,

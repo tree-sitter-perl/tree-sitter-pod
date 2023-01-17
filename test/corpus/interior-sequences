@@ -6,6 +6,15 @@ B<bold>
 (pod
   (plain_paragraph
     (content
+      (interior_sequence (sequence_letter) (content)))))
+==========
+Empty sequence
+==========
+Z<>
+----------
+(pod
+  (plain_paragraph
+    (content
       (interior_sequence (sequence_letter)))))
 ==========
 Mixed sequence/content
@@ -15,7 +24,7 @@ normal B<bold> content
 (pod
   (plain_paragraph
     (content
-      (interior_sequence (sequence_letter)))))
+      (interior_sequence (sequence_letter) (content)))))
 ==========
 Nested sequence
 ==========
@@ -26,4 +35,5 @@ B<I<bold italic>>
     (content
       (interior_sequence
         (sequence_letter)
-        (interior_sequence (sequence_letter))))))
+        (content
+          (interior_sequence (sequence_letter) (content)))))))
