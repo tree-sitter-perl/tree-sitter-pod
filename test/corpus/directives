@@ -1,0 +1,11 @@
+==========
+Headings
+==========
+=head1 NAME
+=head1 DESCRIPTION
+=head2 Example
+----------
+(pod
+  (head_paragraph (head_directive) (content))
+  (head_paragraph (head_directive) (content))
+  (head_paragraph (head_directive) (content)))
