@@ -1,0 +1,29 @@
+==========
+Sequence
+==========
+B<bold>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence (sequence_letter)))))
+==========
+Mixed sequence/content
+==========
+normal B<bold> content
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence (sequence_letter)))))
+==========
+Nested sequence
+==========
+B<I<bold italic>>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence
+        (sequence_letter)
+        (interior_sequence (sequence_letter))))))

@@ -5,6 +5,10 @@ enum TokenType {
   TOKEN_START_DIRECTIVE,
   TOKEN_START_PLAIN,
   TOKEN_START_VERBATIM,
+  TOKEN_CONTENT_PLAIN,
+  TOKEN_INTSEQ_LETTER,
+  TOKEN_INTSEQ_START,
+  TOKEN_INTSEQ_END,
 };
 
 void *tree_sitter_pod_external_scanner_create() { return NULL; }
@@ -72,6 +76,76 @@ bool tree_sitter_pod_external_scanner_scan(
     }
 
     lexer->result_symbol = TOKEN_START_PLAIN;
+    return true;
+  }
+
+  if(valid_symbols[TOKEN_INTSEQ_START]) {
+    if(c == '<') {
+      lexer->advance(lexer, false);
+      lexer->result_symbol = TOKEN_INTSEQ_START;
+      return true;
+    }
+  }
+
+  if(valid_symbols[TOKEN_CONTENT_PLAIN]) {
+    /* We're looking for content plain, escape_start, maybe escape_end */
+    bool want_end = valid_symbols[TOKEN_INTSEQ_END];
+    bool got_plain = false;
+
+    if(lexer->eof(lexer))
+      return false;
+
+    if(want_end && c == '>') {
+      lexer->advance(lexer, false);
+      lexer->result_symbol = TOKEN_INTSEQ_END;
+      return true;
+    }
+
+    if(c >= 'A' && c <= 'Z') {
+      lexer->advance(lexer, false);
+      c = lexer->lookahead;
+
+      if(c == '<') {
+        lexer->result_symbol = TOKEN_INTSEQ_LETTER;
+        return true;
+      }
+    }
+
+    while(1) {
+      if(c >= 'A' && c <= 'Z') {
+        lexer->mark_end(lexer);
+        lexer->advance(lexer, false);
+
+        if(lexer->lookahead == '<') {
+          lexer->result_symbol = TOKEN_CONTENT_PLAIN;
+          return true;
+        }
+      }
+      else if(c == '>' && want_end) {
+        break;
+      }
+      else if(c == '\r') {
+        lexer->advance(lexer, false);
+        c = lexer->lookahead;
+        continue;
+      }
+      else if(c == '\n')
+        break;
+      else if(lexer->eof(lexer)) {
+        lexer->advance(lexer, false);
+        break;
+      }
+      else {
+        lexer->advance(lexer, false);
+      }
+
+      got_plain = true;
+
+      c = lexer->lookahead;
+    }
+
+    lexer->mark_end(lexer);
+    lexer->result_symbol = TOKEN_CONTENT_PLAIN;
     return true;
   }
 

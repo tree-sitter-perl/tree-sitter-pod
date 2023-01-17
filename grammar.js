@@ -5,6 +5,10 @@ module.exports = grammar({
     $._start_directive,
     $._start_plain,
     $._start_verbatim,
+    $._content_plain,
+    $._intseq_letter,
+    $._intseq_start,
+    $._intseq_end,
   ],
   rules: {
     pod: $ => repeat(choice(
@@ -44,6 +48,15 @@ module.exports = grammar({
     cut_paragraph: $ => seq($._start_directive, $.cut_directive, $._eol),
     cut_directive: $ => '=cut',
 
-    content: $ => /.+/,
+    content: $ => $._content,
+    _content: $ => repeat1(choice($._content_plain, $.interior_sequence)),
+
+    interior_sequence: $ => seq(
+      field('letter', $.sequence_letter),
+      $._intseq_start,
+      repeat(choice($._content_plain, $.interior_sequence)),
+      $._intseq_end
+    ),
+    sequence_letter: $ => $._intseq_letter,
   },
 })
