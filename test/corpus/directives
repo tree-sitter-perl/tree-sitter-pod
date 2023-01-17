@@ -9,3 +9,33 @@ Headings
   (head_paragraph (head_directive) (content))
   (head_paragraph (head_directive) (content))
   (head_paragraph (head_directive) (content)))
+==========
+Blank lines
+==========
+=head1 NAME
+
+=head1 DESCRIPTION
+
+=head2 Example
+
+----------
+(pod
+  (head_paragraph (head_directive) (content))
+  (head_paragraph (head_directive) (content))
+  (head_paragraph (head_directive) (content)))
+==========
+Plain paragraphs
+==========
+=head1 NAME
+
+The program name
+
+=head1 DESCRIPTION
+
+A description goes here
+----------
+(pod
+  (head_paragraph (head_directive) (content))
+  (plain_paragraph (content))
+  (head_paragraph (head_directive) (content))
+  (plain_paragraph (content)))
