@@ -4,6 +4,7 @@ enum TokenType {
   TOKEN_EOL,
   TOKEN_START_DIRECTIVE,
   TOKEN_START_PLAIN,
+  TOKEN_START_VERBATIM,
 };
 
 void *tree_sitter_pod_external_scanner_create() { return NULL; }
@@ -41,7 +42,9 @@ bool tree_sitter_pod_external_scanner_scan(
     }
   }
 
-  if(valid_symbols[TOKEN_START_DIRECTIVE] || valid_symbols[TOKEN_START_PLAIN]) {
+  if(valid_symbols[TOKEN_START_DIRECTIVE] ||
+     valid_symbols[TOKEN_START_PLAIN] ||
+     valid_symbols[TOKEN_START_VERBATIM]) {
     if(lexer->eof(lexer))
       return false;
 
@@ -61,6 +64,11 @@ bool tree_sitter_pod_external_scanner_scan(
       case '\n':
       case '\r':
         return false;
+
+      case ' ':
+      case '\t':
+        lexer->result_symbol = TOKEN_START_VERBATIM;
+        return true;
     }
 
     lexer->result_symbol = TOKEN_START_PLAIN;

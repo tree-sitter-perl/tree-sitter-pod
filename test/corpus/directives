@@ -41,3 +41,15 @@ lines
   (plain_paragraph (content))
   (head_paragraph (head_directive) (content))
   (plain_paragraph (content) (content) (content)))
+==========
+Verbatim Paragraphs
+==========
+=head1 EXAMPLE
+
+  Here is an indented block
+  Its lines are literal
+
+----------
+(pod
+  (head_paragraph (head_directive) (content))
+  (verbatim_paragraph (content) (content)))
