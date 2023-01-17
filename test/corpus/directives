@@ -24,6 +24,29 @@ Blank lines
   (head_paragraph (head_directive) (content))
   (head_paragraph (head_directive) (content)))
 ==========
+Indented paragraphs
+==========
+=over 4
+
+=item *
+
+Thing one
+
+=item *
+
+Thing two
+
+=back
+----------
+(pod
+  (indented_block
+    (over_paragraph (over_directive) (content))
+    (item_paragraph (item_directive) (content))
+    (plain_paragraph (content))
+    (item_paragraph (item_directive) (content))
+    (plain_paragraph (content))
+    (back_paragraph (back_directive))))
+==========
 Plain paragraphs
 ==========
 =head1 NAME
