@@ -13,6 +13,9 @@ module.exports = grammar({
       $.plain_paragraph,
       $.verbatim_paragraph,
 
+      // We don't really stop at a `=cut` but it's handy for highlighting purposes
+      $.cut_paragraph,
+
       $._blank_line
     )),
 
@@ -37,6 +40,9 @@ module.exports = grammar({
     plain_paragraph: $ => seq($._start_plain, repeat(seq($.content, $._eol)), $._eol),
 
     verbatim_paragraph: $ => seq($._start_verbatim, repeat(seq($.content, $._eol)), $._eol),
+
+    cut_paragraph: $ => seq($._start_directive, $.cut_directive, $._eol),
+    cut_directive: $ => '=cut',
 
     content: $ => /.+/,
   },
