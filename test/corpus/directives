@@ -33,9 +33,11 @@ The program name
 =head1 DESCRIPTION
 
 A description goes here
+on multiple
+lines
 ----------
 (pod
   (head_paragraph (head_directive) (content))
   (plain_paragraph (content))
   (head_paragraph (head_directive) (content))
-  (plain_paragraph (content)))
+  (plain_paragraph (content) (content) (content)))

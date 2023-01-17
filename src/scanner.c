@@ -24,25 +24,27 @@ bool tree_sitter_pod_external_scanner_scan(
   int c = lexer->lookahead;
 
   if(valid_symbols[TOKEN_EOL]) {
-    /* Consumes an entire sequence of [\r\n]+, also true at EOF */
+    /* Consumes a single \r?\n, also true at EOF */
     if(lexer->eof(lexer)) {
       lexer->result_symbol = TOKEN_EOL;
       return true;
     }
 
-    if(c != '\n' && c != 'r')
-      return false;
-
-    while(c == '\n' || c == '\r') {
+    if(c == '\r') {
       lexer->advance(lexer, true);
       c = lexer->lookahead;
     }
-
-    lexer->result_symbol = TOKEN_EOL;
-    return true;
+    if(c == '\n') {
+      lexer->advance(lexer, true);
+      lexer->result_symbol = TOKEN_EOL;
+      return true;
+    }
   }
 
   if(valid_symbols[TOKEN_START_DIRECTIVE] || valid_symbols[TOKEN_START_PLAIN]) {
+    if(lexer->eof(lexer))
+      return false;
+
     uint32_t column = lexer->get_column(lexer);
 
     if(column > 0)
