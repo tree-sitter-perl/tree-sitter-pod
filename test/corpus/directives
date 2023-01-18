@@ -63,7 +63,7 @@ lines
   (head_paragraph (head_directive) (content))
   (plain_paragraph (content))
   (head_paragraph (head_directive) (content))
-  (plain_paragraph (content) (content) (content)))
+  (plain_paragraph (content)))
 ==========
 Verbatim Paragraphs
 ==========
@@ -75,4 +75,4 @@ Verbatim Paragraphs
 ----------
 (pod
   (head_paragraph (head_directive) (content))
-  (verbatim_paragraph (content) (content)))
+  (verbatim_paragraph (content)))

@@ -121,7 +121,37 @@ bool tree_sitter_pod_external_scanner_scan(
       }
     }
 
-    while(1) {
+    bool at_linefeed = false;
+
+    while(!lexer->eof(lexer)) {
+      if(c == '\r') {
+        lexer->advance(lexer, false);
+        c = lexer->lookahead;
+        continue;
+      }
+
+      if(c == '\n') {
+        if(at_linefeed) {
+          /* Seen double-linefeed; stop here without consuming it */
+          DEBUG("PLAIN ends on double-linefeed\n", 0);
+          TOKEN(TOKEN_CONTENT_PLAIN);
+        }
+
+        at_linefeed = true;
+        lexer->mark_end(lexer);
+        lexer->advance(lexer, false);
+        c = lexer->lookahead;
+        continue;
+      }
+      if(c == '=' && at_linefeed) {
+        /* Technically there should be a blank line before the next directive.
+         * But so many people omit it. We'll allow this here */
+        DEBUG("PLAIN ends at a single linefeed because next line begins '='\n", 0);
+        TOKEN(TOKEN_CONTENT_PLAIN);
+      }
+
+      at_linefeed = false;
+
       if(c >= 'A' && c <= 'Z') {
         lexer->mark_end(lexer);
         lexer->advance(lexer, false);
@@ -133,17 +163,6 @@ bool tree_sitter_pod_external_scanner_scan(
       else if(c == '>' && want_end) {
         break;
       }
-      else if(c == '\r') {
-        lexer->advance(lexer, false);
-        c = lexer->lookahead;
-        continue;
-      }
-      else if(c == '\n')
-        break;
-      else if(lexer->eof(lexer)) {
-        lexer->advance(lexer, false);
-        break;
-      }
       else {
         lexer->advance(lexer, false);
       }
@@ -152,6 +171,8 @@ bool tree_sitter_pod_external_scanner_scan(
 
       c = lexer->lookahead;
     }
+
+    DEBUG("End plain got=%d\n", got_plain);
 
     lexer->mark_end(lexer);
     TOKEN(TOKEN_CONTENT_PLAIN);
