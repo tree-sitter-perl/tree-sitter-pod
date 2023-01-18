@@ -1,6 +1,7 @@
 ; A highlight file for nvim-treesitter to use
 
-[(head_directive)
+[(pod_directive)
+ (head_directive)
  (over_directive)
  (item_directive)
  (back_directive)

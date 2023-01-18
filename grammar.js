@@ -12,6 +12,8 @@ module.exports = grammar({
   ],
   rules: {
     pod: $ => repeat(choice(
+      $.pod_paragraph,
+
       $.head_paragraph,
       $.over_paragraph,
       $.item_paragraph,
@@ -28,6 +30,9 @@ module.exports = grammar({
     )),
 
     _blank_line: $ => /\r?\n/,
+
+    pod_paragraph: $ => seq($._start_directive, $.pod_directive, $._eol),
+    pod_directive: $ => '=pod',
 
     head_paragraph: $ => seq($._start_directive, $.head_directive, $.content, $._eol),
     head_directive: $ => choice('=head1', '=head2', '=head3', '=head4'),
