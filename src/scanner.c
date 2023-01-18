@@ -1,5 +1,23 @@
 #include <tree_sitter/parser.h>
 
+/* Set this to #define instead to enable debug printing */
+#undef DEBUGGING
+
+/* for debug */
+#ifdef DEBUGGING
+#  include <stdio.h>
+#  define DEBUG(fmt,...)  fprintf(stderr, "scanner.c DEBUG: " fmt, __VA_ARGS__)
+#else
+#  define DEBUG(fmt,...)
+#endif
+
+#define TOKEN(type) \
+  do {                            \
+    DEBUG("token(%s)\n", #type);  \
+    lexer->result_symbol = type;  \
+    return true;                  \
+  } while(0)
+
 enum TokenType {
   TOKEN_EOL,
   TOKEN_START_DIRECTIVE,
@@ -31,8 +49,7 @@ bool tree_sitter_pod_external_scanner_scan(
   if(valid_symbols[TOKEN_EOL]) {
     /* Consumes a single \r?\n, also true at EOF */
     if(lexer->eof(lexer)) {
-      lexer->result_symbol = TOKEN_EOL;
-      return true;
+      TOKEN(TOKEN_EOL);
     }
 
     if(c == '\r') {
@@ -41,8 +58,7 @@ bool tree_sitter_pod_external_scanner_scan(
     }
     if(c == '\n') {
       lexer->advance(lexer, true);
-      lexer->result_symbol = TOKEN_EOL;
-      return true;
+      TOKEN(TOKEN_EOL);
     }
   }
 
@@ -62,8 +78,7 @@ bool tree_sitter_pod_external_scanner_scan(
         return false;
 
       case '=':
-        lexer->result_symbol = TOKEN_START_DIRECTIVE;
-        return true;
+        TOKEN(TOKEN_START_DIRECTIVE);
 
       case '\n':
       case '\r':
@@ -71,19 +86,16 @@ bool tree_sitter_pod_external_scanner_scan(
 
       case ' ':
       case '\t':
-        lexer->result_symbol = TOKEN_START_VERBATIM;
-        return true;
+        TOKEN(TOKEN_START_VERBATIM);
     }
 
-    lexer->result_symbol = TOKEN_START_PLAIN;
-    return true;
+    TOKEN(TOKEN_START_PLAIN);
   }
 
   if(valid_symbols[TOKEN_INTSEQ_START]) {
     if(c == '<') {
       lexer->advance(lexer, false);
-      lexer->result_symbol = TOKEN_INTSEQ_START;
-      return true;
+      TOKEN(TOKEN_INTSEQ_START);
     }
   }
 
@@ -97,8 +109,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
     if(want_end && c == '>') {
       lexer->advance(lexer, false);
-      lexer->result_symbol = TOKEN_INTSEQ_END;
-      return true;
+      TOKEN(TOKEN_INTSEQ_END);
     }
 
     if(c >= 'A' && c <= 'Z') {
@@ -106,8 +117,7 @@ bool tree_sitter_pod_external_scanner_scan(
       c = lexer->lookahead;
 
       if(c == '<') {
-        lexer->result_symbol = TOKEN_INTSEQ_LETTER;
-        return true;
+        TOKEN(TOKEN_INTSEQ_LETTER);
       }
     }
 
@@ -117,8 +127,7 @@ bool tree_sitter_pod_external_scanner_scan(
         lexer->advance(lexer, false);
 
         if(lexer->lookahead == '<') {
-          lexer->result_symbol = TOKEN_CONTENT_PLAIN;
-          return true;
+          TOKEN(TOKEN_CONTENT_PLAIN);
         }
       }
       else if(c == '>' && want_end) {
@@ -145,8 +154,7 @@ bool tree_sitter_pod_external_scanner_scan(
     }
 
     lexer->mark_end(lexer);
-    lexer->result_symbol = TOKEN_CONTENT_PLAIN;
-    return true;
+    TOKEN(TOKEN_CONTENT_PLAIN);
   }
 
   return false;
