@@ -11,6 +11,17 @@
 #  define DEBUG(fmt,...)
 #endif
 
+#define ADVANCE \
+  do {                                         \
+    if(c == '\n')                              \
+      DEBUG("> advance U+%04X = \\n\n",        \
+          lexer->lookahead);                   \
+    else                                       \
+      DEBUG("> advance U+%04X = '%c'\n",       \
+          lexer->lookahead, lexer->lookahead); \
+    lexer->advance(lexer, false);              \
+  } while(0)
+
 #define TOKEN(type) \
   do {                            \
     DEBUG("token(%s)\n", #type);  \
@@ -53,10 +64,12 @@ bool tree_sitter_pod_external_scanner_scan(
     }
 
     if(c == '\r') {
+      DEBUG("> skip \\r\n", 0);
       lexer->advance(lexer, true);
       c = lexer->lookahead;
     }
     if(c == '\n') {
+      DEBUG("> advance \\n\n", 0);
       lexer->advance(lexer, true);
       TOKEN(TOKEN_EOL);
     }
@@ -94,7 +107,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
   if(valid_symbols[TOKEN_INTSEQ_START]) {
     if(c == '<') {
-      lexer->advance(lexer, false);
+      ADVANCE;
       TOKEN(TOKEN_INTSEQ_START);
     }
   }
@@ -108,12 +121,12 @@ bool tree_sitter_pod_external_scanner_scan(
       return false;
 
     if(want_end && c == '>') {
-      lexer->advance(lexer, false);
+      ADVANCE;
       TOKEN(TOKEN_INTSEQ_END);
     }
 
     if(c >= 'A' && c <= 'Z') {
-      lexer->advance(lexer, false);
+      ADVANCE;
       c = lexer->lookahead;
 
       if(c == '<') {
@@ -125,7 +138,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
     while(!lexer->eof(lexer)) {
       if(c == '\r') {
-        lexer->advance(lexer, false);
+        ADVANCE;
         c = lexer->lookahead;
         continue;
       }
@@ -139,7 +152,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
         at_linefeed = true;
         lexer->mark_end(lexer);
-        lexer->advance(lexer, false);
+        ADVANCE;
         c = lexer->lookahead;
         continue;
       }
@@ -154,7 +167,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
       if(c >= 'A' && c <= 'Z') {
         lexer->mark_end(lexer);
-        lexer->advance(lexer, false);
+        ADVANCE;
 
         if(lexer->lookahead == '<') {
           TOKEN(TOKEN_CONTENT_PLAIN);
@@ -164,7 +177,7 @@ bool tree_sitter_pod_external_scanner_scan(
         break;
       }
       else {
-        lexer->advance(lexer, false);
+        ADVANCE;
       }
 
       got_plain = true;
