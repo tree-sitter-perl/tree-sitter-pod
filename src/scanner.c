@@ -13,7 +13,10 @@
 
 #define ADVANCE \
   do {                                         \
-    if(c == '\n')                              \
+    if(lexer->lookahead == '\r')               \
+      DEBUG("> advance U+%04X = \\r\n",        \
+          lexer->lookahead);                   \
+    else if(lexer->lookahead == '\n')          \
       DEBUG("> advance U+%04X = \\n\n",        \
           lexer->lookahead);                   \
     else                                       \
