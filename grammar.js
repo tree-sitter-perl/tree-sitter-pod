@@ -13,7 +13,10 @@ module.exports = grammar({
   rules: {
     pod: $ => repeat(choice(
       $.head_paragraph,
-      $.indented_block,
+      $.over_paragraph,
+      $.item_paragraph,
+      $.back_paragraph,
+
       $.plain_paragraph,
       $.verbatim_paragraph,
 
@@ -28,16 +31,12 @@ module.exports = grammar({
     head_paragraph: $ => seq($._start_directive, $.head_directive, $.content, $._eol),
     head_directive: $ => choice('=head1', '=head2', '=head3', '=head4'),
 
-    indented_block: $ => seq(
-      $.over_paragraph,
-      repeat(choice($.item_paragraph, $.plain_paragraph, $.verbatim_paragraph, $._blank_line)),
-      $.back_paragraph,
-    ),
-
     over_paragraph: $ => seq($._start_directive, $.over_directive, $.content, $._eol),
     over_directive: $ => '=over',
+
     item_paragraph: $ => seq($._start_directive, $.item_directive, $.content, $._eol),
     item_directive: $ => '=item',
+
     back_paragraph: $ => seq($._start_directive, $.back_directive, $._eol),
     back_directive: $ => '=back',
 

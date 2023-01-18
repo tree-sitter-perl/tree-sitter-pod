@@ -39,13 +39,12 @@ Thing two
 =back
 ----------
 (pod
-  (indented_block
-    (over_paragraph (over_directive) (content))
-    (item_paragraph (item_directive) (content))
-    (plain_paragraph (content))
-    (item_paragraph (item_directive) (content))
-    (plain_paragraph (content))
-    (back_paragraph (back_directive))))
+  (over_paragraph (over_directive) (content))
+  (item_paragraph (item_directive) (content))
+  (plain_paragraph (content))
+  (item_paragraph (item_directive) (content))
+  (plain_paragraph (content))
+  (back_paragraph (back_directive)))
 ==========
 Plain paragraphs
 ==========
