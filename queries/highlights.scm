@@ -4,12 +4,14 @@
  (over_directive)
  (item_directive)
  (back_directive)
+ (encoding_directive)
  (cut_directive)] @keyword
 
 (head_paragraph (content) @string)
 
 (over_paragraph (content) @string)
 (item_paragraph (content) @string)
+(encoding_paragraph (content) @string)
 
 (verbatim_paragraph (content) @verbatim)
 

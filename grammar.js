@@ -16,6 +16,7 @@ module.exports = grammar({
       $.over_paragraph,
       $.item_paragraph,
       $.back_paragraph,
+      $.encoding_paragraph,
 
       $.plain_paragraph,
       $.verbatim_paragraph,
@@ -39,6 +40,9 @@ module.exports = grammar({
 
     back_paragraph: $ => seq($._start_directive, $.back_directive, $._eol),
     back_directive: $ => '=back',
+
+    encoding_paragraph: $ => seq($._start_directive, $.encoding_directive, $.content, $._eol),
+    encoding_directive: $ => '=encoding',
 
     plain_paragraph: $ => seq($._start_plain, $.content, $._eol),
 
