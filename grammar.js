@@ -35,7 +35,7 @@ module.exports = grammar({
     pod_directive: $ => '=pod',
 
     head_paragraph: $ => seq($._start_directive, $.head_directive, $.content, $._eol),
-    head_directive: $ => choice('=head1', '=head2', '=head3', '=head4'),
+    head_directive: $ => choice('=head1', '=head2', '=head3', '=head4', '=head5', '=head6'),
 
     over_paragraph: $ => seq($._start_directive, $.over_directive, $.content, $._eol),
     over_directive: $ => '=over',
