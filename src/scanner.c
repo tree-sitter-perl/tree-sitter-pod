@@ -128,6 +128,7 @@ bool tree_sitter_pod_external_scanner_scan(
     if(c >= 'A' && c <= 'Z') {
       ADVANCE;
       c = lexer->lookahead;
+      got_plain = true;
 
       if(c == '<') {
         TOKEN(TOKEN_INTSEQ_LETTER);
@@ -146,6 +147,10 @@ bool tree_sitter_pod_external_scanner_scan(
       if(c == '\n') {
         if(at_linefeed) {
           /* Seen double-linefeed; stop here without consuming it */
+          if(!got_plain)
+            /* No content yet so don't bother */
+            return false;
+
           DEBUG("PLAIN ends on double-linefeed\n", 0);
           TOKEN(TOKEN_CONTENT_PLAIN);
         }

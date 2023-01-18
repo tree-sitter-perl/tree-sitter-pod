@@ -37,3 +37,27 @@ B<I<bold italic>>
         (sequence_letter)
         (content
           (interior_sequence (sequence_letter) (content)))))))
+==========
+Unconfused by single letters
+==========
+B
+
+C
+----------
+(pod
+  (plain_paragraph (content))
+  (plain_paragraph (content)))
+==========
+Unconfused by incomplete sequences
+==========
+B<
+
+C<
+----------
+; These yield errors but at least they don't stall the parser. The exact
+; nature of the errors might be fragile, so this test may need changing in
+; future.
+(pod
+  (plain_paragraph
+    (content (interior_sequence (sequence_letter) (MISSING _intseq_end))))
+  (ERROR (sequence_letter)))
