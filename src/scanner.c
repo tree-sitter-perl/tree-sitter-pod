@@ -168,6 +168,10 @@ bool tree_sitter_pod_external_scanner_scan(
         /* Technically there should be a blank line before the next directive.
          * But so many people omit it. We'll allow this here */
         DEBUG("PLAIN ends at a single linefeed because next line begins '='\n", 0);
+        /* if we haven't gotten content, then we're gonna return a zero-width
+         * CONTENT_PLAIN + loop FOREVER */
+        if(!got_plain)
+          return false;
         TOKEN(TOKEN_CONTENT_PLAIN);
       }
 
