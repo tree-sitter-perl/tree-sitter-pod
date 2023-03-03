@@ -133,7 +133,8 @@ bool tree_sitter_pod_external_scanner_scan(
       c = lexer->lookahead;
       got_plain = true;
 
-      if(c == '<') {
+      /* don't read these in a verbatim paragraph */
+      if(c == '<' && valid_symbols[TOKEN_INTSEQ_LETTER]) {
         TOKEN(TOKEN_INTSEQ_LETTER);
       }
     }
@@ -168,12 +169,17 @@ bool tree_sitter_pod_external_scanner_scan(
         /* Technically there should be a blank line before the next directive.
          * But so many people omit it. We'll allow this here */
         DEBUG("PLAIN ends at a single linefeed because next line begins '='\n", 0);
+        /* if we haven't gotten content, then we're gonna return a zero-width
+         * CONTENT_PLAIN + loop FOREVER; better bail out */
+        if(!got_plain)
+          return false;
         TOKEN(TOKEN_CONTENT_PLAIN);
       }
 
       at_linefeed = false;
 
-      if(c >= 'A' && c <= 'Z') {
+      /* don't give up our letters if intseqs ain't valid */
+      if(c >= 'A' && c <= 'Z' && valid_symbols[TOKEN_INTSEQ_LETTER]) {
         lexer->mark_end(lexer);
         ADVANCE;
 

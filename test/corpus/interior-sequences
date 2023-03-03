@@ -61,3 +61,13 @@ C<
   (plain_paragraph
     (content (interior_sequence (sequence_letter) (MISSING _intseq_end))))
   (ERROR (sequence_letter)))
+==========
+Incomplete sequence does not loop forever
+==========
+Z<
+=cut
+----------
+; Same warning as above in terms of fragility. Fixes gh#2
+(pod
+  (ERROR (sequence_letter) (cut_directive))
+)

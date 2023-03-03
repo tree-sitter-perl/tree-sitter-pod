@@ -69,7 +69,7 @@ Verbatim Paragraphs
 =head1 EXAMPLE
 
   Here is an indented block
-  Its lines are literal
+  Its lines are literal B<1>
 
 ----------
 (pod

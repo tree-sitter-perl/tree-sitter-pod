@@ -51,7 +51,7 @@ module.exports = grammar({
 
     plain_paragraph: $ => seq($._start_plain, $.content, $._eol),
 
-    verbatim_paragraph: $ => seq($._start_verbatim, $.content, $._eol),
+    verbatim_paragraph: $ => seq($._start_verbatim, alias($._content_plain, $.content), $._eol),
 
     cut_paragraph: $ => seq($._start_directive, $.cut_directive, $._eol),
     cut_directive: $ => '=cut',
