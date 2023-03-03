@@ -26,6 +26,15 @@ normal B<bold> content
     (content
       (interior_sequence (sequence_letter) (content)))))
 ==========
+Multiple chevrons
+==========
+A sequence with C<< inner->arrows >>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence (sequence_letter) (content)))))
+==========
 Nested sequence
 ==========
 B<I<bold italic>>
