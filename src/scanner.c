@@ -11,7 +11,7 @@
 #  define DEBUG(fmt,...)
 #endif
 
-#define ADVANCE \
+#define ADVANCE_C \
   do {                                         \
     if(lexer->lookahead == '\r')               \
       DEBUG("> advance U+%04X = \\r\n",        \
@@ -23,6 +23,7 @@
       DEBUG("> advance U+%04X = '%c'\n",       \
           lexer->lookahead, lexer->lookahead); \
     lexer->advance(lexer, false);              \
+    c = lexer->lookahead;                      \
   } while(0)
 
 #define TOKEN(type) \
@@ -110,7 +111,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
   if(valid_symbols[TOKEN_INTSEQ_START]) {
     if(c == '<') {
-      ADVANCE;
+      ADVANCE_C;
       TOKEN(TOKEN_INTSEQ_START);
     }
   }
@@ -124,13 +125,12 @@ bool tree_sitter_pod_external_scanner_scan(
       return false;
 
     if(want_end && c == '>') {
-      ADVANCE;
+      ADVANCE_C;
       TOKEN(TOKEN_INTSEQ_END);
     }
 
     if(c >= 'A' && c <= 'Z') {
-      ADVANCE;
-      c = lexer->lookahead;
+      ADVANCE_C;
       got_plain = true;
 
       /* don't read these in a verbatim paragraph */
@@ -143,8 +143,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
     while(!lexer->eof(lexer)) {
       if(c == '\r') {
-        ADVANCE;
-        c = lexer->lookahead;
+        ADVANCE_C;
         continue;
       }
 
@@ -161,8 +160,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
         at_linefeed = true;
         lexer->mark_end(lexer);
-        ADVANCE;
-        c = lexer->lookahead;
+        ADVANCE_C;
         continue;
       }
       if(c == '=' && at_linefeed) {
@@ -181,9 +179,9 @@ bool tree_sitter_pod_external_scanner_scan(
       /* don't give up our letters if intseqs ain't valid */
       if(c >= 'A' && c <= 'Z' && valid_symbols[TOKEN_INTSEQ_LETTER]) {
         lexer->mark_end(lexer);
-        ADVANCE;
+        ADVANCE_C;
 
-        if(lexer->lookahead == '<') {
+        if(c == '<') {
           TOKEN(TOKEN_CONTENT_PLAIN);
         }
       }
@@ -191,7 +189,7 @@ bool tree_sitter_pod_external_scanner_scan(
         break;
       }
       else {
-        ADVANCE;
+        ADVANCE_C;
       }
 
       got_plain = true;
