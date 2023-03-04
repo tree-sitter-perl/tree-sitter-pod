@@ -47,6 +47,18 @@ B<I<bold italic>>
         (content
           (interior_sequence (sequence_letter) (content)))))))
 ==========
+Multiple nested
+==========
+A<< contains <=> and B<b> inside it >>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence
+        (sequence_letter)
+        (content
+          (interior_sequence (sequence_letter) (content)))))))
+==========
 Unconfused by single letters
 ==========
 B
