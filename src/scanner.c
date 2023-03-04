@@ -11,7 +11,9 @@
 #  define DEBUG(fmt,...)
 #endif
 
-#define ADVANCE \
+#include <string.h>
+
+#define ADVANCE_C \
   do {                                         \
     if(lexer->lookahead == '\r')               \
       DEBUG("> advance U+%04X = \\r\n",        \
@@ -23,6 +25,7 @@
       DEBUG("> advance U+%04X = '%c'\n",       \
           lexer->lookahead, lexer->lookahead); \
     lexer->advance(lexer, false);              \
+    c = lexer->lookahead;                      \
   } while(0)
 
 #define TOKEN(type) \
@@ -43,21 +46,76 @@ enum TokenType {
   TOKEN_INTSEQ_END,
 };
 
-void *tree_sitter_pod_external_scanner_create() { return NULL; }
+#define MAX_NESTED_CHEVRONS 8
 
-void tree_sitter_pod_external_scanner_destroy(void *payload) {}
+struct LexerState {
+  unsigned char chevron_count[MAX_NESTED_CHEVRONS]; /* stores at most MAX count */
+  unsigned char nchevrons; /* always the true number, further are implied =1 if beyond MAX */
+};
 
-void tree_sitter_pod_external_scanner_reset(void *payload) {}
+void *tree_sitter_pod_external_scanner_create()
+{
+  struct LexerState *state = malloc(sizeof(struct LexerState));
 
-unsigned int tree_sitter_pod_external_scanner_serialize(void *payload, char *buffer) { return 0; }
+  state->nchevrons = 0;
 
-void tree_sitter_pod_external_scanner_deserialize(void *payload, const char *buffer, unsigned int n) {}
+  return state;
+}
+
+void tree_sitter_pod_external_scanner_destroy(void *payload)
+{
+  free(payload);
+}
+
+void tree_sitter_pod_external_scanner_reset(void *payload)
+{
+  struct LexerState *state = payload;
+
+  state->nchevrons = 0;
+}
+
+unsigned int tree_sitter_pod_external_scanner_serialize(void *payload, char *buffer)
+{
+  struct LexerState *state = payload;
+
+  unsigned int n = sizeof(struct LexerState);
+  memcpy(buffer, state, n);
+  return n;
+}
+
+void tree_sitter_pod_external_scanner_deserialize(void *payload, const char *buffer, unsigned int n)
+{
+  struct LexerState *state = payload;
+
+  memcpy(state, buffer, n);
+}
+
+static void chevron_count_push(struct LexerState *state, int count)
+{
+  if(state->nchevrons < MAX_NESTED_CHEVRONS)
+    state->chevron_count[state->nchevrons] = count;
+  state->nchevrons++;
+}
+
+static int chevron_count_top(struct LexerState *state)
+{
+  if(state->nchevrons >= MAX_NESTED_CHEVRONS)
+    return 1;
+  return state->chevron_count[state->nchevrons-1];
+}
+
+static void chevron_count_pop(struct LexerState *state)
+{
+  state->nchevrons--;
+}
 
 bool tree_sitter_pod_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
   const bool *valid_symbols
 ) {
+  struct LexerState *state = payload;
+
   int c = lexer->lookahead;
 
   if(valid_symbols[TOKEN_EOL]) {
@@ -110,7 +168,14 @@ bool tree_sitter_pod_external_scanner_scan(
 
   if(valid_symbols[TOKEN_INTSEQ_START]) {
     if(c == '<') {
-      ADVANCE;
+      int count = 1;
+      ADVANCE_C;
+      while(c == '<') {
+        count++;
+        ADVANCE_C;
+      }
+
+      chevron_count_push(state, count);
       TOKEN(TOKEN_INTSEQ_START);
     }
   }
@@ -124,13 +189,17 @@ bool tree_sitter_pod_external_scanner_scan(
       return false;
 
     if(want_end && c == '>') {
-      ADVANCE;
+      int count = chevron_count_top(state);
+      while(count && c == '>') {
+        ADVANCE_C;
+        count--;
+      }
+      chevron_count_pop(state);
       TOKEN(TOKEN_INTSEQ_END);
     }
 
     if(c >= 'A' && c <= 'Z') {
-      ADVANCE;
-      c = lexer->lookahead;
+      ADVANCE_C;
       got_plain = true;
 
       /* don't read these in a verbatim paragraph */
@@ -143,8 +212,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
     while(!lexer->eof(lexer)) {
       if(c == '\r') {
-        ADVANCE;
-        c = lexer->lookahead;
+        ADVANCE_C;
         continue;
       }
 
@@ -161,8 +229,7 @@ bool tree_sitter_pod_external_scanner_scan(
 
         at_linefeed = true;
         lexer->mark_end(lexer);
-        ADVANCE;
-        c = lexer->lookahead;
+        ADVANCE_C;
         continue;
       }
       if(c == '=' && at_linefeed) {
@@ -181,17 +248,26 @@ bool tree_sitter_pod_external_scanner_scan(
       /* don't give up our letters if intseqs ain't valid */
       if(c >= 'A' && c <= 'Z' && valid_symbols[TOKEN_INTSEQ_LETTER]) {
         lexer->mark_end(lexer);
-        ADVANCE;
+        ADVANCE_C;
 
-        if(lexer->lookahead == '<') {
+        if(c == '<') {
           TOKEN(TOKEN_CONTENT_PLAIN);
         }
       }
       else if(c == '>' && want_end) {
-        break;
+        lexer->mark_end(lexer);
+        int count = chevron_count_top(state);
+        while(count > 1 && c == '>') {
+          ADVANCE_C;
+          count--;
+        }
+        if(c == '>') {
+          DEBUG("End plain got=%d\n", got_plain);
+          TOKEN(TOKEN_CONTENT_PLAIN);
+        }
       }
       else {
-        ADVANCE;
+        ADVANCE_C;
       }
 
       got_plain = true;
