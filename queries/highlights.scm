@@ -10,9 +10,9 @@
 
 (head_paragraph (content) @text.title)
 
-(over_paragraph (content) @string)
-(item_paragraph (content) @string)
-(encoding_paragraph (content) @string)
+(over_paragraph (content) @text.title)
+(item_paragraph (content) @text.title)
+(encoding_paragraph (content) @text.title)
 
 (verbatim_paragraph (content) @text.literal)
 
