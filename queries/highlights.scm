@@ -17,9 +17,9 @@
 (verbatim_paragraph (content) @text.literal)
 
 (interior_sequence
-  ["<" ">"] @punctuation.delimiter
   (sequence_letter) @character
-  (content) @text
+  "<" @punctuation.delimiter
+  ">" @punctuation.delimiter
 )
 
 (interior_sequence
