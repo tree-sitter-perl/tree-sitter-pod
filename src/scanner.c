@@ -78,11 +78,12 @@ bool tree_sitter_pod_external_scanner_scan(
     }
   }
 
+  if(lexer->eof(lexer))
+    return false;
+
   if(valid_symbols[TOKEN_START_DIRECTIVE] ||
      valid_symbols[TOKEN_START_PLAIN] ||
      valid_symbols[TOKEN_START_VERBATIM]) {
-    if(lexer->eof(lexer))
-      return false;
 
     uint32_t column = lexer->get_column(lexer);
 
@@ -119,9 +120,6 @@ bool tree_sitter_pod_external_scanner_scan(
     /* We're looking for content plain, escape_start, maybe escape_end */
     bool want_end = valid_symbols[TOKEN_INTSEQ_END];
     bool got_plain = false;
-
-    if(lexer->eof(lexer))
-      return false;
 
     if(want_end && c == '>') {
       ADVANCE;

@@ -86,6 +86,10 @@
           "name": "head_directive"
         },
         {
+          "type": "PATTERN",
+          "value": "\\s*"
+        },
+        {
           "type": "SYMBOL",
           "name": "content"
         },
@@ -136,6 +140,10 @@
           "name": "over_directive"
         },
         {
+          "type": "PATTERN",
+          "value": "\\s*"
+        },
+        {
           "type": "SYMBOL",
           "name": "content"
         },
@@ -159,6 +167,10 @@
         {
           "type": "SYMBOL",
           "name": "item_directive"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\s*"
         },
         {
           "type": "SYMBOL",
@@ -205,6 +217,10 @@
         {
           "type": "SYMBOL",
           "name": "encoding_directive"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\s*"
         },
         {
           "type": "SYMBOL",
@@ -312,8 +328,13 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_intseq_start"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_intseq_start"
+          },
+          "named": false,
+          "value": "<"
         },
         {
           "type": "CHOICE",
@@ -328,8 +349,13 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_intseq_end"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_intseq_end"
+          },
+          "named": false,
+          "value": ">"
         }
       ]
     },

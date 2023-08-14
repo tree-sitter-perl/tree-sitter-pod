@@ -249,6 +249,10 @@
     }
   },
   {
+    "type": "<",
+    "named": false
+  },
+  {
     "type": "=head1",
     "named": false
   },
@@ -270,6 +274,10 @@
   },
   {
     "type": "=head6",
+    "named": false
+  },
+  {
+    "type": ">",
     "named": false
   },
   {
