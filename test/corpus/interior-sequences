@@ -59,7 +59,7 @@ C<
 ; future.
 (pod
   (plain_paragraph
-    (content (interior_sequence (sequence_letter) (MISSING _intseq_end))))
+    (content (interior_sequence (sequence_letter) (MISSING ">"))))
   (ERROR (sequence_letter)))
 ==========
 Incomplete sequence does not loop forever
