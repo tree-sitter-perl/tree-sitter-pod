@@ -4,6 +4,9 @@ on:
     branches: 
       - main
 
+permissions:
+  contents: write
+
 concurrency:
   group: release-main
   cancel-in-progress: true
