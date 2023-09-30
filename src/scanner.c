@@ -23,6 +23,7 @@
       DEBUG("> advance U+%04X = '%c'\n",       \
           lexer->lookahead, lexer->lookahead); \
     lexer->advance(lexer, false);              \
+    c = lexer->lookahead;                      \
   } while(0)
 
 #define TOKEN(type) \
@@ -128,7 +129,6 @@ bool tree_sitter_pod_external_scanner_scan(
 
     if(c >= 'A' && c <= 'Z') {
       ADVANCE_C;
-      c = lexer->lookahead;
       got_plain = true;
 
       /* don't read these in a verbatim paragraph */
@@ -142,7 +142,6 @@ bool tree_sitter_pod_external_scanner_scan(
     while(!lexer->eof(lexer)) {
       if(c == '\r') {
         ADVANCE_C;
-        c = lexer->lookahead;
         continue;
       }
 
@@ -160,7 +159,6 @@ bool tree_sitter_pod_external_scanner_scan(
         at_linefeed = true;
         lexer->mark_end(lexer);
         ADVANCE_C;
-        c = lexer->lookahead;
         continue;
       }
       if(c == '=' && at_linefeed) {
@@ -181,7 +179,7 @@ bool tree_sitter_pod_external_scanner_scan(
         lexer->mark_end(lexer);
         ADVANCE_C;
 
-        if(lexer->lookahead == '<') {
+        if(c == '<') {
           TOKEN(TOKEN_CONTENT_PLAIN);
         }
       }
