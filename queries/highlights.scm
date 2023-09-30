@@ -4,7 +4,15 @@
  (command)
  (cut_command)] @keyword
 
-(command_paragraph (content) @text.title)
+(command_paragraph
+  (command) @keyword
+  (#match? @keyword "^=head")
+  (content) @text.title)
+
+(command_paragraph
+  (command) @keyword
+  (#not-match? @keyword "^=head")
+  (content) @string)
 
 (verbatim_paragraph (content) @text.literal)
 
