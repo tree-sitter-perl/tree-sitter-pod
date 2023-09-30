@@ -6,9 +6,9 @@ Headings
 =head2 Example
 ----------
 (pod
-  (head_paragraph (head_directive) (content))
-  (head_paragraph (head_directive) (content))
-  (head_paragraph (head_directive) (content)))
+  (command_paragraph (command) (content))
+  (command_paragraph (command) (content))
+  (command_paragraph (command) (content)))
 ==========
 Blank lines
 ==========
@@ -20,9 +20,9 @@ Blank lines
 
 ----------
 (pod
-  (head_paragraph (head_directive) (content))
-  (head_paragraph (head_directive) (content))
-  (head_paragraph (head_directive) (content)))
+  (command_paragraph (command) (content))
+  (command_paragraph (command) (content))
+  (command_paragraph (command) (content)))
 ==========
 Indented paragraphs
 ==========
@@ -39,12 +39,12 @@ Thing two
 =back
 ----------
 (pod
-  (over_paragraph (over_directive) (content))
-  (item_paragraph (item_directive) (content))
+  (command_paragraph (command) (content))
+  (command_paragraph (command) (content))
   (plain_paragraph (content))
-  (item_paragraph (item_directive) (content))
+  (command_paragraph (command) (content))
   (plain_paragraph (content))
-  (back_paragraph (back_directive)))
+  (command_paragraph (command)))
 ==========
 Plain paragraphs
 ==========
@@ -59,9 +59,9 @@ on multiple
 lines
 ----------
 (pod
-  (head_paragraph (head_directive) (content))
+  (command_paragraph (command) (content))
   (plain_paragraph (content))
-  (head_paragraph (head_directive) (content))
+  (command_paragraph (command) (content))
   (plain_paragraph (content)))
 ==========
 Verbatim Paragraphs
@@ -73,5 +73,5 @@ Verbatim Paragraphs
 
 ----------
 (pod
-  (head_paragraph (head_directive) (content))
+  (command_paragraph (command) (content))
   (verbatim_paragraph (content)))

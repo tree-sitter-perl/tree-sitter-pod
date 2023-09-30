@@ -14,11 +14,7 @@ module.exports = grammar({
     pod: $ => repeat(choice(
       $.pod_paragraph,
 
-      $.head_paragraph,
-      $.over_paragraph,
-      $.item_paragraph,
-      $.back_paragraph,
-      $.encoding_paragraph,
+      $.command_paragraph,
 
       $.plain_paragraph,
       $.verbatim_paragraph,
@@ -34,20 +30,8 @@ module.exports = grammar({
     pod_paragraph: $ => seq($._start_directive, $.pod_directive, $._eol),
     pod_directive: $ => '=pod',
 
-    head_paragraph: $ => seq($._start_directive, $.head_directive, /\s*/, $.content, $._eol),
-    head_directive: $ => choice('=head1', '=head2', '=head3', '=head4', '=head5', '=head6'),
-
-    over_paragraph: $ => seq($._start_directive, $.over_directive, /\s*/, $.content, $._eol),
-    over_directive: $ => '=over',
-
-    item_paragraph: $ => seq($._start_directive, $.item_directive, /\s*/, $.content, $._eol),
-    item_directive: $ => '=item',
-
-    back_paragraph: $ => seq($._start_directive, $.back_directive, $._eol),
-    back_directive: $ => '=back',
-
-    encoding_paragraph: $ => seq($._start_directive, $.encoding_directive, /\s*/, $.content, $._eol),
-    encoding_directive: $ => '=encoding',
+    command_paragraph: $ => seq($._start_directive, $.command, /\s*/, optional($.content), $._eol),
+    command: $ => token(/=[a-zA-Z]\S*/),
 
     plain_paragraph: $ => seq($._start_plain, $.content, $._eol),
 

@@ -1,18 +1,10 @@
 ; A highlight file for nvim-treesitter to use
 
 [(pod_directive)
- (head_directive)
- (over_directive)
- (item_directive)
- (back_directive)
- (encoding_directive)
+ (command)
  (cut_directive)] @keyword
 
-(head_paragraph (content) @text.title)
-
-(over_paragraph (content) @text.title)
-(item_paragraph (content) @text.title)
-(encoding_paragraph (content) @text.title)
+(command_paragraph (content) @text.title)
 
 (verbatim_paragraph (content) @text.literal)
 
