@@ -1,8 +1,8 @@
 ; A highlight file for nvim-treesitter to use
 
-[(pod_directive)
+[(pod_command)
  (command)
- (cut_directive)] @keyword
+ (cut_command)] @keyword
 
 (command_paragraph (content) @text.title)
 

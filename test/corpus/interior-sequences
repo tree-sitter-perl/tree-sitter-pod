@@ -69,5 +69,5 @@ Z<
 ----------
 ; Same warning as above in terms of fragility. Fixes gh#2
 (pod
-  (ERROR (sequence_letter) (cut_directive))
+  (ERROR (sequence_letter) (cut_command))
 )
