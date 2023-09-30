@@ -30,7 +30,8 @@ module.exports = grammar({
     pod_paragraph: $ => seq($._start_directive, $.pod_directive, $._eol),
     pod_directive: $ => '=pod',
 
-    command_paragraph: $ => seq($._start_directive, $.command, /\s*/, optional($.content), $._eol),
+    // \s includes linefeed; tree-sitter doesn't seem to recognise \h for "horizontal whitespace
+    command_paragraph: $ => seq($._start_directive, $.command, /[ \t]*/, optional($.content), $._eol),
     command: $ => token(/=[a-zA-Z]\S*/),
 
     plain_paragraph: $ => seq($._start_plain, $.content, $._eol),

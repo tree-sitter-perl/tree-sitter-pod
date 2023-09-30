@@ -37,6 +37,8 @@ Thing one
 Thing two
 
 =back
+
+This should be plain again
 ----------
 (pod
   (command_paragraph (command) (content))
@@ -44,7 +46,8 @@ Thing two
   (plain_paragraph (content))
   (command_paragraph (command) (content))
   (plain_paragraph (content))
-  (command_paragraph (command)))
+  (command_paragraph (command))
+  (plain_paragraph (content)))
 ==========
 Plain paragraphs
 ==========
