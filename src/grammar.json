@@ -12,23 +12,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "head_paragraph"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "over_paragraph"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "item_paragraph"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "back_paragraph"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "encoding_paragraph"
+            "name": "command_paragraph"
           },
           {
             "type": "SYMBOL",
@@ -58,11 +42,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_start_directive"
+          "name": "_start_command"
         },
         {
           "type": "SYMBOL",
-          "name": "pod_directive"
+          "name": "pod_command"
         },
         {
           "type": "SYMBOL",
@@ -70,82 +54,36 @@
         }
       ]
     },
-    "pod_directive": {
+    "pod_command": {
       "type": "STRING",
       "value": "=pod"
     },
-    "head_paragraph": {
+    "command_paragraph": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_start_directive"
+          "name": "_start_command"
         },
         {
           "type": "SYMBOL",
-          "name": "head_directive"
+          "name": "command"
         },
         {
           "type": "PATTERN",
-          "value": "\\s*"
+          "value": "[ \\t]*"
         },
         {
-          "type": "SYMBOL",
-          "name": "content"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_eol"
-        }
-      ]
-    },
-    "head_directive": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "=head1"
-        },
-        {
-          "type": "STRING",
-          "value": "=head2"
-        },
-        {
-          "type": "STRING",
-          "value": "=head3"
-        },
-        {
-          "type": "STRING",
-          "value": "=head4"
-        },
-        {
-          "type": "STRING",
-          "value": "=head5"
-        },
-        {
-          "type": "STRING",
-          "value": "=head6"
-        }
-      ]
-    },
-    "over_paragraph": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_start_directive"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "over_directive"
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\s*"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "content"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "content"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
@@ -153,88 +91,12 @@
         }
       ]
     },
-    "over_directive": {
-      "type": "STRING",
-      "value": "=over"
-    },
-    "item_paragraph": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_start_directive"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "item_directive"
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\s*"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "content"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_eol"
-        }
-      ]
-    },
-    "item_directive": {
-      "type": "STRING",
-      "value": "=item"
-    },
-    "back_paragraph": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_start_directive"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "back_directive"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_eol"
-        }
-      ]
-    },
-    "back_directive": {
-      "type": "STRING",
-      "value": "=back"
-    },
-    "encoding_paragraph": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_start_directive"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "encoding_directive"
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\s*"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "content"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_eol"
-        }
-      ]
-    },
-    "encoding_directive": {
-      "type": "STRING",
-      "value": "=encoding"
+    "command": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "=[a-zA-Z]\\S*"
+      }
     },
     "plain_paragraph": {
       "type": "SEQ",
@@ -280,11 +142,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_start_directive"
+          "name": "_start_command"
         },
         {
           "type": "SYMBOL",
-          "name": "cut_directive"
+          "name": "cut_command"
         },
         {
           "type": "SYMBOL",
@@ -292,7 +154,7 @@
         }
       ]
     },
-    "cut_directive": {
+    "cut_command": {
       "type": "STRING",
       "value": "=cut"
     },
@@ -379,7 +241,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_start_directive"
+      "name": "_start_command"
     },
     {
       "type": "SYMBOL",

@@ -34,7 +34,7 @@
 
 enum TokenType {
   TOKEN_EOL,
-  TOKEN_START_DIRECTIVE,
+  TOKEN_START_COMMAND,
   TOKEN_START_PLAIN,
   TOKEN_START_VERBATIM,
   TOKEN_CONTENT_PLAIN,
@@ -81,7 +81,7 @@ bool tree_sitter_pod_external_scanner_scan(
   if(lexer->eof(lexer))
     return false;
 
-  if(valid_symbols[TOKEN_START_DIRECTIVE] ||
+  if(valid_symbols[TOKEN_START_COMMAND] ||
      valid_symbols[TOKEN_START_PLAIN] ||
      valid_symbols[TOKEN_START_VERBATIM]) {
 
@@ -95,7 +95,7 @@ bool tree_sitter_pod_external_scanner_scan(
         return false;
 
       case '=':
-        TOKEN(TOKEN_START_DIRECTIVE);
+        TOKEN(TOKEN_START_COMMAND);
 
       case '\n':
       case '\r':
@@ -164,7 +164,7 @@ bool tree_sitter_pod_external_scanner_scan(
         continue;
       }
       if(c == '=' && at_linefeed) {
-        /* Technically there should be a blank line before the next directive.
+        /* Technically there should be a blank line before the next command.
          * But so many people omit it. We'll allow this here */
         DEBUG("PLAIN ends at a single linefeed because next line begins '='\n", 0);
         /* if we haven't gotten content, then we're gonna return a zero-width

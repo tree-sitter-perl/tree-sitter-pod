@@ -1,14 +1,18 @@
 [
   {
-    "type": "back_paragraph",
+    "type": "command_paragraph",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "back_directive",
+          "type": "command",
+          "named": true
+        },
+        {
+          "type": "content",
           "named": true
         }
       ]
@@ -38,50 +42,7 @@
       "required": true,
       "types": [
         {
-          "type": "cut_directive",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "encoding_paragraph",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "content",
-          "named": true
-        },
-        {
-          "type": "encoding_directive",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "head_directive",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "head_paragraph",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "content",
-          "named": true
-        },
-        {
-          "type": "head_directive",
+          "type": "cut_command",
           "named": true
         }
       ]
@@ -114,44 +75,6 @@
     }
   },
   {
-    "type": "item_paragraph",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "content",
-          "named": true
-        },
-        {
-          "type": "item_directive",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "over_paragraph",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "content",
-          "named": true
-        },
-        {
-          "type": "over_directive",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "plain_paragraph",
     "named": true,
     "fields": {},
@@ -175,27 +98,11 @@
       "required": false,
       "types": [
         {
-          "type": "back_paragraph",
+          "type": "command_paragraph",
           "named": true
         },
         {
           "type": "cut_paragraph",
-          "named": true
-        },
-        {
-          "type": "encoding_paragraph",
-          "named": true
-        },
-        {
-          "type": "head_paragraph",
-          "named": true
-        },
-        {
-          "type": "item_paragraph",
-          "named": true
-        },
-        {
-          "type": "over_paragraph",
           "named": true
         },
         {
@@ -222,7 +129,7 @@
       "required": true,
       "types": [
         {
-          "type": "pod_directive",
+          "type": "pod_command",
           "named": true
         }
       ]
@@ -253,55 +160,19 @@
     "named": false
   },
   {
-    "type": "=head1",
-    "named": false
-  },
-  {
-    "type": "=head2",
-    "named": false
-  },
-  {
-    "type": "=head3",
-    "named": false
-  },
-  {
-    "type": "=head4",
-    "named": false
-  },
-  {
-    "type": "=head5",
-    "named": false
-  },
-  {
-    "type": "=head6",
-    "named": false
-  },
-  {
     "type": ">",
     "named": false
   },
   {
-    "type": "back_directive",
+    "type": "command",
     "named": true
   },
   {
-    "type": "cut_directive",
+    "type": "cut_command",
     "named": true
   },
   {
-    "type": "encoding_directive",
-    "named": true
-  },
-  {
-    "type": "item_directive",
-    "named": true
-  },
-  {
-    "type": "over_directive",
-    "named": true
-  },
-  {
-    "type": "pod_directive",
+    "type": "pod_command",
     "named": true
   }
 ]
