@@ -192,8 +192,10 @@ bool tree_sitter_pod_external_scanner_scan(
         ADVANCE_C;
         count--;
       }
-      chevron_count_pop(state);
-      TOKEN(TOKEN_INTSEQ_END);
+      if(!count) {
+        chevron_count_pop(state);
+        TOKEN(TOKEN_INTSEQ_END);
+      }
     }
 
     if(c >= 'A' && c <= 'Z') {

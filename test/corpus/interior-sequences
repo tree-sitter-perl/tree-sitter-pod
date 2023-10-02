@@ -59,6 +59,18 @@ A<< contains <=> and B<b> inside it >>
         (content
           (interior_sequence (sequence_letter) (content)))))))
 ==========
+Does not consume shorter sequence of '>'
+==========
+C<<> still inside C here; so A<is inside both>>>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence
+        (sequence_letter)
+        (content
+          (interior_sequence (sequence_letter) (content)))))))
+==========
 Unconfused by single letters
 ==========
 B
