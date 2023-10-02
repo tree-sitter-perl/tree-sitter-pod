@@ -66,8 +66,12 @@
           "name": "_start_command"
         },
         {
-          "type": "SYMBOL",
-          "name": "command"
+          "type": "FIELD",
+          "name": "command",
+          "content": {
+            "type": "SYMBOL",
+            "name": "command"
+          }
         },
         {
           "type": "PATTERN",
