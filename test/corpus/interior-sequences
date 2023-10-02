@@ -26,9 +26,42 @@ normal B<bold> content
     (content
       (interior_sequence (sequence_letter) (content)))))
 ==========
+Multiple chevrons
+==========
+A sequence with C<< inner->arrows >>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence (sequence_letter) (content)))))
+==========
 Nested sequence
 ==========
 B<I<bold italic>>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence
+        (sequence_letter)
+        (content
+          (interior_sequence (sequence_letter) (content)))))))
+==========
+Multiple nested
+==========
+A<< contains <=> and B<b> inside it >>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence
+        (sequence_letter)
+        (content
+          (interior_sequence (sequence_letter) (content)))))))
+==========
+Does not consume shorter sequence of '>'
+==========
+C<<> still inside C here; so A<is inside both>>>
 ----------
 (pod
   (plain_paragraph
