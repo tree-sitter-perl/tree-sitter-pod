@@ -11,7 +11,22 @@
 
 (command_paragraph
   (command) @keyword
-  (#not-match? @keyword "^=head")
+  (#match? @keyword "^=over")
+  (content) @number)
+
+(command_paragraph
+  (command) @keyword
+  (#match? @keyword "^=item")
+  (content) @text)
+
+(command_paragraph
+  (command) @keyword
+  (#match? @keyword "^=encoding")
+  (content) @string.special)
+
+(command_paragraph
+  (command) @keyword
+  (#not-match? @keyword "^=(head|over|item|encoding)")
   (content) @string)
 
 (verbatim_paragraph (content) @text.literal)
