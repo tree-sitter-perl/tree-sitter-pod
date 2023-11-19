@@ -7,7 +7,7 @@
     "test": "tree-sitter generate && tree-sitter test"
   },
   "author": "leonerd",
-  "license": "ISC",
+  "license": "Artistic-2.0",
   "dependencies": {
     "nan": "^2.17.0"
   },
