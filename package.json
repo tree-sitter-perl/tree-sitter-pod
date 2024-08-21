@@ -29,7 +29,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.4",
     "eslint-plugin-promise": "^6.0.0",
-    "tree-sitter-cli": "^0.26.6",
+    "tree-sitter-cli": "^0.22.6",
     "prebuildify": "^6.0.0"
   },
   "tree-sitter": [
