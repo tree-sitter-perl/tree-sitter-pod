@@ -48,6 +48,10 @@
 
 (interior_sequence
   (sequence_letter) @character
+  (#eq? @character "U")
+  (content) @text.underline)
+(interior_sequence
+  (sequence_letter) @character
   (#eq? @character "F")
   (content) @text.underline @string.special)
 
