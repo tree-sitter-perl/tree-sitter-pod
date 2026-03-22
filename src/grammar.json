@@ -13,6 +13,14 @@
           },
           {
             "type": "SYMBOL",
+            "name": "begin_paragraph"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "for_paragraph"
+          },
+          {
+            "type": "SYMBOL",
             "name": "command_paragraph"
           },
           {
@@ -58,6 +66,135 @@
     "pod_command": {
       "type": "STRING",
       "value": "=pod"
+    },
+    "begin_paragraph": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_start_command"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "begin_command"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]+"
+        },
+        {
+          "type": "FIELD",
+          "name": "format",
+          "content": {
+            "type": "SYMBOL",
+            "name": "format_name"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_eol"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_data_section"
+          },
+          "named": true,
+          "value": "data"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_start_command"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "end_command"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]+"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "format_name"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_eol"
+        }
+      ]
+    },
+    "begin_command": {
+      "type": "STRING",
+      "value": "=begin"
+    },
+    "end_command": {
+      "type": "STRING",
+      "value": "=end"
+    },
+    "for_paragraph": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_start_command"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "for_command"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[ \\t]+"
+        },
+        {
+          "type": "FIELD",
+          "name": "format",
+          "content": {
+            "type": "SYMBOL",
+            "name": "format_name"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[ \\t]+"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_content_plain"
+                  },
+                  "named": true,
+                  "value": "content"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_eol"
+        }
+      ]
+    },
+    "for_command": {
+      "type": "STRING",
+      "value": "=for"
+    },
+    "format_name": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z:]\\S*"
     },
     "command_paragraph": {
       "type": "SEQ",
@@ -271,6 +408,10 @@
     {
       "type": "SYMBOL",
       "name": "_intseq_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_data_section"
     }
   ],
   "inline": [],
