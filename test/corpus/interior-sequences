@@ -91,9 +91,9 @@ C<
 ; nature of the errors might be fragile, so this test may need changing in
 ; future.
 (pod
-  (plain_paragraph
-    (content (interior_sequence (sequence_letter) (MISSING ">"))))
-  (ERROR (sequence_letter)))
+  (ERROR
+    (sequence_letter)
+    (format_name)))
 ==========
 Incomplete sequence does not loop forever
 ==========
