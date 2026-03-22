@@ -2,7 +2,10 @@
 
 [(pod_command)
  (command)
- (cut_command)] @keyword
+ (cut_command)
+ (begin_command)
+ (end_command)
+ (for_command)] @keyword
 
 (command_paragraph
   (command) @keyword
@@ -30,6 +33,10 @@
   (content) @string)
 
 (verbatim_paragraph (content) @text.literal)
+
+(begin_paragraph (format_name) @string.special)
+(for_paragraph (format_name) @string.special)
+(begin_paragraph (data) @text.literal)
 
 (interior_sequence
   (sequence_letter) @character

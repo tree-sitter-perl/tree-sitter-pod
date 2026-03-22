@@ -1,5 +1,43 @@
 [
   {
+    "type": "begin_paragraph",
+    "named": true,
+    "fields": {
+      "format": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "format_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "begin_command",
+          "named": true
+        },
+        {
+          "type": "data",
+          "named": true
+        },
+        {
+          "type": "end_command",
+          "named": true
+        },
+        {
+          "type": "format_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "command_paragraph",
     "named": true,
     "fields": {
@@ -56,6 +94,36 @@
     }
   },
   {
+    "type": "for_paragraph",
+    "named": true,
+    "fields": {
+      "format": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "format_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "content",
+          "named": true
+        },
+        {
+          "type": "for_command",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "interior_sequence",
     "named": true,
     "fields": {
@@ -106,11 +174,19 @@
       "required": false,
       "types": [
         {
+          "type": "begin_paragraph",
+          "named": true
+        },
+        {
           "type": "command_paragraph",
           "named": true
         },
         {
           "type": "cut_paragraph",
+          "named": true
+        },
+        {
+          "type": "for_paragraph",
           "named": true
         },
         {
@@ -172,11 +248,31 @@
     "named": false
   },
   {
+    "type": "begin_command",
+    "named": true
+  },
+  {
     "type": "command",
     "named": true
   },
   {
     "type": "cut_command",
+    "named": true
+  },
+  {
+    "type": "data",
+    "named": true
+  },
+  {
+    "type": "end_command",
+    "named": true
+  },
+  {
+    "type": "for_command",
+    "named": true
+  },
+  {
+    "type": "format_name",
     "named": true
   },
   {
