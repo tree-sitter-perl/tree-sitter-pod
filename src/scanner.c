@@ -44,6 +44,7 @@ enum TokenType {
   TOKEN_INTSEQ_LETTER,
   TOKEN_INTSEQ_START,
   TOKEN_INTSEQ_END,
+  TOKEN_DATA_SECTION,
 };
 
 #define MAX_NESTED_CHEVRONS 8
@@ -51,6 +52,7 @@ enum TokenType {
 struct LexerState {
   unsigned char chevron_count[MAX_NESTED_CHEVRONS]; /* stores at most MAX count */
   unsigned char nchevrons; /* always the true number, further are implied =1 if beyond MAX */
+  unsigned char did_zw_data; /* guard: emitted zero-width data section last scan */
 };
 
 void *tree_sitter_pod_external_scanner_create()
@@ -70,6 +72,7 @@ void tree_sitter_pod_external_scanner_reset(void *payload)
   struct LexerState *state = payload;
 
   state->nchevrons = 0;
+  state->did_zw_data = 0;
 }
 
 unsigned int tree_sitter_pod_external_scanner_serialize(void *payload, char *buffer)
@@ -107,6 +110,24 @@ static void chevron_count_pop(struct LexerState *state)
   state->nchevrons--;
 }
 
+/* Check if the lexer is at a line starting with "=end" followed by
+ * whitespace, newline, or EOF. Peeks ahead without affecting mark_end.
+ * Caller must call mark_end before this if they want to preserve position. */
+static bool at_end_command(TSLexer *lexer)
+{
+  if(lexer->lookahead != '=') return false;
+  lexer->advance(lexer, false);
+  if(lexer->lookahead != 'e') return false;
+  lexer->advance(lexer, false);
+  if(lexer->lookahead != 'n') return false;
+  lexer->advance(lexer, false);
+  if(lexer->lookahead != 'd') return false;
+  lexer->advance(lexer, false);
+  /* =end must be followed by whitespace, newline, or EOF */
+  int next = lexer->lookahead;
+  return next == ' ' || next == '\t' || next == '\n' || next == '\r' || lexer->eof(lexer);
+}
+
 bool tree_sitter_pod_external_scanner_scan(
   void *payload,
   TSLexer *lexer,
@@ -136,6 +157,67 @@ bool tree_sitter_pod_external_scanner_scan(
 
   if(lexer->eof(lexer))
     return false;
+
+  /* Data section: consume everything until =end at column 0.
+   * Always emits TOKEN_DATA_SECTION (possibly zero-length for empty
+   * =begin/=end blocks). Must be checked before TOKEN_START_COMMAND
+   * since the parser expects _data_section first inside begin_paragraph.
+   *
+   * Guard: if we already emitted a zero-width data section on the previous
+   * scan, refuse to emit another one to prevent infinite loops. */
+  if(valid_symbols[TOKEN_DATA_SECTION]) {
+    if(state->did_zw_data) {
+      state->did_zw_data = 0;
+      return false;
+    }
+
+    lexer->mark_end(lexer); /* mark start position for potential zero-length token */
+    bool at_bol = true; /* we start right after _eol, so at beginning of line */
+    bool got_content = false;
+
+    while(!lexer->eof(lexer)) {
+      c = lexer->lookahead;
+
+      /* At start of a line, check for =end */
+      if(at_bol && c == '=') {
+        lexer->mark_end(lexer);
+        if(at_end_command(lexer)) {
+          /* Found =end — return data up to here (may be zero-length) */
+          state->did_zw_data = !got_content;
+          TOKEN(TOKEN_DATA_SECTION);
+        }
+        /* Not =end, continue consuming (advance already moved past =xxx) */
+        at_bol = false;
+        got_content = true;
+        continue;
+      }
+
+      at_bol = false;
+
+      if(c == '\n') {
+        lexer->advance(lexer, false);
+        at_bol = true;
+        got_content = true;
+        continue;
+      }
+      if(c == '\r') {
+        lexer->advance(lexer, false);
+        if(lexer->lookahead == '\n') {
+          lexer->advance(lexer, false);
+        }
+        at_bol = true;
+        got_content = true;
+        continue;
+      }
+
+      lexer->advance(lexer, false);
+      got_content = true;
+    }
+
+    /* EOF without =end — return whatever we consumed */
+    lexer->mark_end(lexer);
+    TOKEN(TOKEN_DATA_SECTION);
+  }
 
   if(valid_symbols[TOKEN_START_COMMAND] ||
      valid_symbols[TOKEN_START_PLAIN] ||

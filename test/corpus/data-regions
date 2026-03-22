@@ -1,0 +1,103 @@
+==========
+Basic begin/end
+==========
+=begin html
+
+<p>Hello world</p>
+
+=end html
+----------
+(pod
+  (begin_paragraph
+    (begin_command) (format_name)
+    (data)
+    (end_command) (format_name)))
+==========
+Empty begin/end
+==========
+=begin html
+=end html
+----------
+(pod
+  (begin_paragraph
+    (begin_command) (format_name)
+    (data)
+    (end_command) (format_name)))
+==========
+Begin/end with command-like content
+==========
+=begin text
+
+=head1 This is not a command
+=over 4
+Just data
+
+=end text
+----------
+(pod
+  (begin_paragraph
+    (begin_command) (format_name)
+    (data)
+    (end_command) (format_name)))
+==========
+For paragraph
+==========
+=for html <b>bold text</b>
+----------
+(pod
+  (for_paragraph
+    (for_command) (format_name) (content)))
+==========
+For paragraph without content
+==========
+=for comment
+----------
+(pod
+  (for_paragraph
+    (for_command) (format_name)))
+==========
+Begin/end does not consume past =end
+==========
+=begin html
+
+<p>data</p>
+
+=end html
+
+=head1 After
+----------
+(pod
+  (begin_paragraph
+    (begin_command) (format_name)
+    (data)
+    (end_command) (format_name))
+  (command_paragraph (command) (content)))
+==========
+Begin/end with colon format
+==========
+=begin :html
+
+<p>data</p>
+
+=end :html
+----------
+(pod
+  (begin_paragraph
+    (begin_command) (format_name)
+    (data)
+    (end_command) (format_name)))
+==========
+Not confused by =ending inside data
+==========
+=begin text
+
+=ending is not =end
+more data
+
+=end text
+----------
+(pod
+  (begin_paragraph
+    (begin_command) (format_name)
+    (data)
+    (end_command) (format_name)))

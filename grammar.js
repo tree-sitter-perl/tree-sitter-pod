@@ -9,11 +9,14 @@ module.exports = grammar({
     $._intseq_letter,
     $._intseq_start,
     $._intseq_end,
+    $._data_section,
   ],
   rules: {
     pod: $ => repeat(choice(
       $.pod_paragraph,
 
+      $.begin_paragraph,
+      $.for_paragraph,
       $.command_paragraph,
 
       $.plain_paragraph,
@@ -29,6 +32,23 @@ module.exports = grammar({
 
     pod_paragraph: $ => seq($._start_command, $.pod_command, $._eol),
     pod_command: $ => '=pod',
+
+    begin_paragraph: $ => seq(
+      $._start_command, $.begin_command, /[ \t]+/, field('format', $.format_name), $._eol,
+      alias($._data_section, $.data),
+      $._start_command, $.end_command, /[ \t]+/, $.format_name, $._eol,
+    ),
+    begin_command: $ => '=begin',
+    end_command: $ => '=end',
+
+    for_paragraph: $ => seq(
+      $._start_command, $.for_command, /[ \t]+/, field('format', $.format_name),
+      optional(seq(/[ \t]+/, alias($._content_plain, $.content))),
+      $._eol,
+    ),
+    for_command: $ => '=for',
+
+    format_name: $ => /[a-zA-Z:]\S*/,
 
     // \s includes linefeed; tree-sitter doesn't seem to recognise \h for "horizontal whitespace
     command_paragraph: $ => seq($._start_command, field('command', $.command), /[ \t]*/, optional($.content), $._eol),
