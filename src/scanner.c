@@ -55,9 +55,7 @@ struct LexerState {
 
 void *tree_sitter_pod_external_scanner_create()
 {
-  struct LexerState *state = malloc(sizeof(struct LexerState));
-
-  state->nchevrons = 0;
+  struct LexerState *state = calloc(1, sizeof(struct LexerState));
 
   return state;
 }

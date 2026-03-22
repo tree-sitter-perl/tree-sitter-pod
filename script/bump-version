@@ -1,0 +1,39 @@
+#!/usr/bin/env perl
+
+use v5.20;
+use warnings;
+use File::Slurp qw(read_file write_file);
+
+my $version = shift or die "Usage: $0 <version>\n  e.g. $0 0.2.0\n";
+$version =~ /^\d+\.\d+\.\d+$/ or die "Version must be semver (e.g. 0.2.0), got: $version\n";
+
+my @files = (
+    {
+        file    => 'package.json',
+        pattern => qr/"version":\s*"[^"]*"/,
+        replace => qq("version": "$version"),
+    },
+    {
+        file    => 'Cargo.toml',
+        pattern => qr/^version\s*=\s*"[^"]*"/m,
+        replace => qq(version = "$version"),
+    },
+    {
+        file    => 'pyproject.toml',
+        pattern => qr/^version\s*=\s*"[^"]*"/m,
+        replace => qq(version = "$version"),
+    },
+);
+
+for my $spec (@files) {
+    my $content = read_file($spec->{file});
+    my $count = ($content =~ s/$spec->{pattern}/$spec->{replace}/);
+    die "Failed to find version in $spec->{file}\n" unless $count;
+    write_file($spec->{file}, $content);
+    say "Updated $spec->{file} → $version";
+}
+
+say "\nDone. To release:\n  git add package.json Cargo.toml pyproject.toml";
+say "  git commit -m 'chore: bump version to $version'";
+say "  git tag v$version";
+say "  git push origin main v$version";

@@ -1,14 +1,23 @@
 name: CI
+
 on:
   workflow_dispatch:
   pull_request:
   push:
+    branches:
+      - main
+    paths:
+      - grammar.js
+      - src/**
+      - bindings/**
+      - queries/**
+      - test/**
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
@@ -16,5 +25,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm run dev-install
-      - run: npm test
+      - uses: tree-sitter/setup-action/cli@v2
+      - run: tree-sitter generate
+      - run: tree-sitter test

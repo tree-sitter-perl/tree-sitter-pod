@@ -1,5 +1,6 @@
 from os.path import isdir, join
 from platform import system
+from sysconfig import get_config_var
 
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build import build
@@ -17,8 +18,8 @@ class Build(build):
 class BdistWheel(bdist_wheel):
     def get_tag(self):
         python, abi, platform = super().get_tag()
-        if python.startswith("cp"):
-            python, abi = "cp38", "abi3"
+        if python.startswith("cp") and not get_config_var("Py_GIL_DISABLED"):
+            python, abi = "cp39", "abi3"
         return python, abi, platform
 
 
@@ -36,14 +37,11 @@ setup(
             sources=[
                 "bindings/python/tree_sitter_pod/binding.c",
                 "src/parser.c",
-                # NOTE: if your language uses an external scanner, add it here.
+                "src/scanner.c",
             ],
-            extra_compile_args=[
-                "-std=c11",
-            ] if system() != "Windows" else [
-                "/std:c11",
-                "/utf-8",
-            ],
+            extra_compile_args=(
+                ["-std=c11"] if system() != 'Windows' else []
+            ),
             define_macros=[
                 ("Py_LIMITED_API", "0x03080000"),
                 ("PY_SSIZE_T_CLEAN", None)

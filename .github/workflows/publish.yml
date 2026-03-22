@@ -1,0 +1,103 @@
+name: Publish packages
+
+on:
+  push:
+    tags: ["*"]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  github:
+    uses: tree-sitter/workflows/.github/workflows/release.yml@main
+    with:
+      generate: true
+
+  # Inlined instead of reusable workflows because tree-sitter/workflows
+  # runs `npm install` before `tree-sitter generate`, which fails when
+  # parser.c is gitignored. We generate from grammar.json first, then
+  # install and build.
+
+  npm:
+    name: Publish npm package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - uses: tree-sitter/setup-action/cli@v2
+      - run: tree-sitter generate src/grammar.json
+      - run: npm install --ignore-scripts
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  crates:
+    name: Publish Rust package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: tree-sitter/setup-action/cli@v2
+      - run: tree-sitter generate src/grammar.json
+      - run: cargo publish --allow-dirty
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  pypi-sdist:
+    name: Build Python source dist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: tree-sitter/setup-action/cli@v2
+      - run: tree-sitter generate src/grammar.json
+      - run: pip install --upgrade build setuptools wheel
+      - run: python -mbuild -n -s
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-sources
+          path: dist/*.tar.gz
+          retention-days: 2
+
+  pypi-wheels:
+    name: Build Python wheels (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-13, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: tree-sitter/setup-action/cli@v2
+      - run: tree-sitter generate src/grammar.json
+      - uses: pypa/cibuildwheel@v2.22
+        with:
+          output-dir: dist
+        env:
+          CIBW_ARCHS: native
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-wheels-${{ matrix.os }}
+          path: dist/*.whl
+          retention-days: 2
+
+  pypi-publish:
+    name: Publish Python package
+    needs: [pypi-sdist, pypi-wheels]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: dist-*
+          merge-multiple: true
+      - run: ls -l dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
