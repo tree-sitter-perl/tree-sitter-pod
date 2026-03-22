@@ -52,6 +52,7 @@ enum TokenType {
 struct LexerState {
   unsigned char chevron_count[MAX_NESTED_CHEVRONS]; /* stores at most MAX count */
   unsigned char nchevrons; /* always the true number, further are implied =1 if beyond MAX */
+  unsigned char did_zw_data; /* guard: emitted zero-width data section last scan */
 };
 
 void *tree_sitter_pod_external_scanner_create()
@@ -71,6 +72,7 @@ void tree_sitter_pod_external_scanner_reset(void *payload)
   struct LexerState *state = payload;
 
   state->nchevrons = 0;
+  state->did_zw_data = 0;
 }
 
 unsigned int tree_sitter_pod_external_scanner_serialize(void *payload, char *buffer)
@@ -159,10 +161,19 @@ bool tree_sitter_pod_external_scanner_scan(
   /* Data section: consume everything until =end at column 0.
    * Always emits TOKEN_DATA_SECTION (possibly zero-length for empty
    * =begin/=end blocks). Must be checked before TOKEN_START_COMMAND
-   * since the parser expects _data_section first inside begin_paragraph. */
+   * since the parser expects _data_section first inside begin_paragraph.
+   *
+   * Guard: if we already emitted a zero-width data section on the previous
+   * scan, refuse to emit another one to prevent infinite loops. */
   if(valid_symbols[TOKEN_DATA_SECTION]) {
+    if(state->did_zw_data) {
+      state->did_zw_data = 0;
+      return false;
+    }
+
     lexer->mark_end(lexer); /* mark start position for potential zero-length token */
     bool at_bol = true; /* we start right after _eol, so at beginning of line */
+    bool got_content = false;
 
     while(!lexer->eof(lexer)) {
       c = lexer->lookahead;
@@ -172,10 +183,12 @@ bool tree_sitter_pod_external_scanner_scan(
         lexer->mark_end(lexer);
         if(at_end_command(lexer)) {
           /* Found =end — return data up to here (may be zero-length) */
+          state->did_zw_data = !got_content;
           TOKEN(TOKEN_DATA_SECTION);
         }
         /* Not =end, continue consuming (advance already moved past =xxx) */
         at_bol = false;
+        got_content = true;
         continue;
       }
 
@@ -184,6 +197,7 @@ bool tree_sitter_pod_external_scanner_scan(
       if(c == '\n') {
         lexer->advance(lexer, false);
         at_bol = true;
+        got_content = true;
         continue;
       }
       if(c == '\r') {
@@ -192,10 +206,12 @@ bool tree_sitter_pod_external_scanner_scan(
           lexer->advance(lexer, false);
         }
         at_bol = true;
+        got_content = true;
         continue;
       }
 
       lexer->advance(lexer, false);
+      got_content = true;
     }
 
     /* EOF without =end — return whatever we consumed */
