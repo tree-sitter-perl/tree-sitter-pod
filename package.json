@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-pod",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A tree-sitter parser for POD",
   "main": "bindings/node",
   "types": "bindings/node",
