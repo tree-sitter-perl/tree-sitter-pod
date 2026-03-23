@@ -12,6 +12,10 @@
   "engines": {
     "node": ">= 20.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tree-sitter-perl/tree-sitter-pod.git"
+  },
   "author": "leonerd",
   "license": "Artistic-2.0",
   "dependencies": {

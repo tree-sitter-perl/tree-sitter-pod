@@ -23,6 +23,9 @@ jobs:
   npm:
     name: Publish npm package
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,23 +33,28 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
       - uses: tree-sitter/setup-action/cli@v2
+      - run: npm install -g npm@latest
       - run: tree-sitter generate src/grammar.json
       - run: npm install --ignore-scripts
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish --provenance --access public
 
   crates:
     name: Publish Rust package
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - uses: tree-sitter/setup-action/cli@v2
       - run: tree-sitter generate src/grammar.json
+      - name: Authenticate with crates.io
+        id: auth
+        uses: rust-lang/crates-io-auth-action@v1
       - run: cargo publish --allow-dirty
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
 
   pypi-sdist:
     name: Build Python source dist
@@ -71,7 +79,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-13, windows-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-14, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: tree-sitter/setup-action/cli@v2
@@ -91,6 +99,8 @@ jobs:
     name: Publish Python package
     needs: [pypi-sdist, pypi-wheels]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -99,5 +109,3 @@ jobs:
           merge-multiple: true
       - run: ls -l dist
       - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
