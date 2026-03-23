@@ -1,5 +1,5 @@
 [package]
-name = "tree-sitter-pod"
+name = "ts-parser-pod"
 description = "Pod grammar for tree-sitter"
 version = "0.0.1"
 license = "Artistic-2.0"

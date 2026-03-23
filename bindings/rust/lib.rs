@@ -6,7 +6,7 @@
 //! ```
 //! let code = "";
 //! let mut parser = tree_sitter::Parser::new();
-//! let language = tree_sitter_pod::LANGUAGE;
+//! let language = ts_parser_pod::LANGUAGE;
 //! parser.set_language(&language.into()).expect("Error loading pod grammar");
 //! let tree = parser.parse(code, None).unwrap();
 //! ```
