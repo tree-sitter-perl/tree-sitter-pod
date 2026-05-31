@@ -104,3 +104,60 @@ Z<
 (pod
   (ERROR (sequence_letter) (cut_command))
 )
+==========
+Escape sequence
+==========
+E<lt>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (escape_sequence (sequence_letter) (content)))))
+==========
+Empty escape sequence
+==========
+E<>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (escape_sequence (sequence_letter)))))
+==========
+Numeric escape sequence
+==========
+E<0x263A>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (escape_sequence (sequence_letter) (content)))))
+==========
+Escape with multiple chevrons
+==========
+E<< verbar >>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (escape_sequence (sequence_letter) (content)))))
+==========
+Escape content is not markup
+==========
+E<B<lt>>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (escape_sequence (sequence_letter) (content)))))
+==========
+Escape nested in other sequence
+==========
+B<some E<gt> thing>
+----------
+(pod
+  (plain_paragraph
+    (content
+      (interior_sequence
+        (sequence_letter)
+        (content
+          (escape_sequence (sequence_letter) (content)))))))
