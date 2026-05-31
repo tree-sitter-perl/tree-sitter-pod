@@ -10,6 +10,7 @@ module.exports = grammar({
     $._intseq_start,
     $._intseq_end,
     $._data_section,
+    $._intseq_escape_letter,
   ],
   rules: {
     pod: $ => repeat(choice(
@@ -62,7 +63,7 @@ module.exports = grammar({
     cut_command: $ => '=cut',
 
     content: $ => $._content,
-    _content: $ => repeat1(choice($._content_plain, $.interior_sequence)),
+    _content: $ => repeat1(choice($._content_plain, $.interior_sequence, $.escape_sequence)),
 
     interior_sequence: $ => seq(
       field('letter', $.sequence_letter),
@@ -71,5 +72,18 @@ module.exports = grammar({
       alias($._intseq_end, '>'),
     ),
     sequence_letter: $ => $._intseq_letter,
+
+    // E<...> is always an escape sequence; its content is an entity name or
+    // number (e.g. lt, gt, copy, 0x263A), not nested Pod markup. The content
+    // is a repeat1 of plain tokens (rather than a single one) so that the
+    // scanner always sees TOKEN_CONTENT_PLAIN co-valid with TOKEN_INTSEQ_END,
+    // which is the condition under which it will emit the closing '>'.
+    escape_sequence: $ => seq(
+      field('letter', alias($._intseq_escape_letter, $.sequence_letter)),
+      alias($._intseq_start, '<'),
+      optional(alias($._escape_content, $.content)),
+      alias($._intseq_end, '>'),
+    ),
+    _escape_content: $ => repeat1($._content_plain),
   },
 })
