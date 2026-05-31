@@ -72,6 +72,10 @@
       "required": false,
       "types": [
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "interior_sequence",
           "named": true
         }
@@ -88,6 +92,32 @@
       "types": [
         {
           "type": "cut_command",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "escape_sequence",
+    "named": true,
+    "fields": {
+      "letter": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "sequence_letter",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "content",
           "named": true
         }
       ]

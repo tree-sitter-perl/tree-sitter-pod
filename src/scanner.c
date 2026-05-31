@@ -45,6 +45,7 @@ enum TokenType {
   TOKEN_INTSEQ_START,
   TOKEN_INTSEQ_END,
   TOKEN_DATA_SECTION,
+  TOKEN_INTSEQ_ESCAPE_LETTER,
 };
 
 #define MAX_NESTED_CHEVRONS 8
@@ -279,11 +280,16 @@ bool tree_sitter_pod_external_scanner_scan(
     }
 
     if(c >= 'A' && c <= 'Z') {
+      int letter = c;
       ADVANCE_C;
       got_plain = true;
 
       /* don't read these in a verbatim paragraph */
       if(c == '<' && valid_symbols[TOKEN_INTSEQ_LETTER]) {
+        /* E<...> is an escape sequence, not generic markup; its content is
+         * an entity name or number, so emit a distinct letter token. */
+        if(letter == 'E' && valid_symbols[TOKEN_INTSEQ_ESCAPE_LETTER])
+          TOKEN(TOKEN_INTSEQ_ESCAPE_LETTER);
         TOKEN(TOKEN_INTSEQ_LETTER);
       }
     }
